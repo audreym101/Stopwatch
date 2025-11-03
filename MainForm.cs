@@ -12,17 +12,14 @@ namespace Stopwatch
     {
         private readonly StopwatchEngine _stopwatchEngine;
         private readonly System.Windows.Forms.Timer _uiTimer;
-        private readonly System.Windows.Forms.Timer _animationTimer;
         private Label _timeLabel;
-        private RoundButton _startButton;
-        private RoundButton _pauseButton;
-        private RoundButton _resumeButton;
-        private RoundButton _resetButton;
-        private RoundButton _stopButton;
+        private Button _startButton;
+        private Button _pauseButton;
+        private Button _resumeButton;
+        private Button _resetButton;
+        private Button _stopButton;
         private Label _statusLabel;
         private Panel _timePanel;
-        private int _pulseDirection = 1;
-        private float _pulseAlpha = 0.5f;
 
         /// <summary>
         /// Initializes a new instance of the MainForm class
@@ -34,11 +31,6 @@ namespace Stopwatch
             _uiTimer.Interval = 100;
             _uiTimer.Tick += UpdateDisplay;
             
-            _animationTimer = new System.Windows.Forms.Timer();
-            _animationTimer.Interval = 50;
-            _animationTimer.Tick += AnimationTick;
-            _animationTimer.Start();
-            
             InitializeComponent();
             UpdateButtonStates();
         }
@@ -48,99 +40,123 @@ namespace Stopwatch
         /// </summary>
         private void InitializeComponent()
         {
-            this.Text = "⏱️ Modern Stopwatch";
-            this.Size = new Size(500, 400);
+            this.Text = "⌚ Watch Stopwatch";
+            this.Size = new Size(400, 450);
+            this.MinimumSize = new Size(350, 400);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.BackColor = Color.FromArgb(25, 25, 35);
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.BackColor = Color.FromArgb(20, 20, 30);
             this.Paint += MainForm_Paint;
+            this.Resize += MainForm_Resize;
 
-            // Time panel with gradient background
+            // Circular watch face panel
             _timePanel = new Panel
             {
-                Location = new Point(50, 40),
-                Size = new Size(400, 120),
                 BackColor = Color.Transparent
             };
-            _timePanel.Paint += TimePanel_Paint;
+            _timePanel.Paint += WatchFace_Paint;
 
             // Time display label
             _timeLabel = new Label
             {
                 Text = "00:00:00",
-                Font = new Font("Segoe UI", 36, FontStyle.Bold),
+                Font = new Font("Segoe UI", 28, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = Color.Transparent,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Location = new Point(0, 30),
-                Size = new Size(400, 60)
+                TextAlign = ContentAlignment.MiddleCenter
             };
 
             // Status label
             _statusLabel = new Label
             {
                 Text = "Ready to Start",
-                Font = new Font("Segoe UI", 12, FontStyle.Italic),
+                Font = new Font("Segoe UI", 10, FontStyle.Italic),
                 ForeColor = Color.FromArgb(150, 150, 170),
                 BackColor = Color.Transparent,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Location = new Point(0, 85),
-                Size = new Size(400, 25)
+                TextAlign = ContentAlignment.MiddleCenter
             };
 
             _timePanel.Controls.AddRange(new Control[] { _timeLabel, _statusLabel });
 
-            // Create modern rounded buttons
-            _startButton = CreateModernButton("▶ START", new Point(80, 200), Color.FromArgb(46, 204, 113), StartButton_Click);
-            _pauseButton = CreateModernButton("⏸ PAUSE", new Point(200, 200), Color.FromArgb(241, 196, 15), PauseButton_Click);
-            _resumeButton = CreateModernButton("▶ RESUME", new Point(320, 200), Color.FromArgb(52, 152, 219), ResumeButton_Click);
-            _resetButton = CreateModernButton("🔄 RESET", new Point(140, 260), Color.FromArgb(155, 89, 182), ResetButton_Click);
-            _stopButton = CreateModernButton("⏹ STOP", new Point(260, 260), Color.FromArgb(231, 76, 60), StopButton_Click);
+            // Create aligned watch-style buttons
+            _startButton = CreateWatchButton("▶", Color.FromArgb(46, 204, 113), StartButton_Click);
+            _pauseButton = CreateWatchButton("⏸", Color.FromArgb(241, 196, 15), PauseButton_Click);
+            _resumeButton = CreateWatchButton("▶", Color.FromArgb(52, 152, 219), ResumeButton_Click);
+            _resetButton = CreateWatchButton("↻", Color.FromArgb(155, 89, 182), ResetButton_Click);
+            _stopButton = CreateWatchButton("⏹", Color.FromArgb(231, 76, 60), StopButton_Click);
 
-            // Add close button
-            var closeButton = new Button
-            {
-                Text = "✕",
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                ForeColor = Color.White,
-                BackColor = Color.FromArgb(231, 76, 60),
-                FlatStyle = FlatStyle.Flat,
-                Size = new Size(30, 30),
-                Location = new Point(460, 10)
-            };
-            closeButton.FlatAppearance.BorderSize = 0;
-            closeButton.Click += (s, e) => this.Close();
+            PositionControls();
 
             this.Controls.AddRange(new Control[] 
             { 
                 _timePanel, _startButton, _pauseButton, _resumeButton, 
-                _resetButton, _stopButton, closeButton 
+                _resetButton, _stopButton 
             });
         }
 
         /// <summary>
-        /// Creates a modern rounded button with gradient styling
+        /// Creates a simple rectangular button
         /// </summary>
         /// <param name="text">Button text</param>
-        /// <param name="location">Button location</param>
         /// <param name="color">Button color</param>
         /// <param name="clickHandler">Click event handler</param>
-        /// <returns>Configured modern button control</returns>
-        private RoundButton CreateModernButton(string text, Point location, Color color, EventHandler clickHandler)
+        /// <returns>Configured button control</returns>
+        private Button CreateWatchButton(string text, Color color, EventHandler clickHandler)
         {
-            var button = new RoundButton
+            var button = new Button
             {
                 Text = text,
-                Size = new Size(100, 45),
-                Location = location,
+                Size = new Size(60, 35),
                 BackColor = color,
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                FlatStyle = FlatStyle.Flat
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                UseVisualStyleBackColor = false
             };
             button.FlatAppearance.BorderSize = 0;
             button.Click += clickHandler;
             return button;
+        }
+
+        /// <summary>
+        /// Positions all controls based on current form size
+        /// </summary>
+        private void PositionControls()
+        {
+            var centerX = this.ClientSize.Width / 2;
+            var centerY = this.ClientSize.Height / 2;
+            var watchSize = Math.Min(this.ClientSize.Width - 100, this.ClientSize.Height - 150);
+            
+            // Position watch face
+            _timePanel.Location = new Point(centerX - watchSize/2, 50);
+            _timePanel.Size = new Size(watchSize, watchSize);
+            
+            // Position labels within watch face
+            _timeLabel.Location = new Point(0, watchSize/2 - 25);
+            _timeLabel.Size = new Size(watchSize, 50);
+            _statusLabel.Location = new Point(0, watchSize/2 + 30);
+            _statusLabel.Size = new Size(watchSize, 20);
+            
+            // Position buttons: 3 on top, 2 on bottom
+            var topButtonY = _timePanel.Bottom + 15;
+            var bottomButtonY = topButtonY + 50;
+            
+            // Top row: Start, Pause, Resume
+            _startButton.Location = new Point(centerX - 95, topButtonY);
+            _pauseButton.Location = new Point(centerX - 30, topButtonY);
+            _resumeButton.Location = new Point(centerX + 35, topButtonY);
+            
+            // Bottom row: Reset, Stop (centered)
+            _resetButton.Location = new Point(centerX - 65, bottomButtonY);
+            _stopButton.Location = new Point(centerX + 5, bottomButtonY);
+        }
+        
+        /// <summary>
+        /// Handles form resize events
+        /// </summary>
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            PositionControls();
         }
 
         /// <summary>
@@ -156,62 +172,57 @@ namespace Stopwatch
         }
 
         /// <summary>
-        /// Paints the time panel with animated glow effect
+        /// Paints the watch face with circular design
         /// </summary>
-        private void TimePanel_Paint(object sender, PaintEventArgs e)
+        private void WatchFace_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            var rect = _timePanel.ClientRectangle;
-            rect.Inflate(-2, -2);
+            var size = Math.Min(_timePanel.Width, _timePanel.Height) - 20;
+            var rect = new Rectangle(10, 10, size, size);
             
-            using (var path = GetRoundedRectPath(rect, 20))
+            // Watch face background
+            using (var brush = new LinearGradientBrush(rect, Color.FromArgb(70, 70, 90), Color.FromArgb(30, 30, 50), 45f))
             {
-                // Gradient background
-                using (var brush = new LinearGradientBrush(rect, 
-                    Color.FromArgb(60, 60, 80), Color.FromArgb(40, 40, 60), 90f))
-                {
-                    e.Graphics.FillPath(brush, path);
-                }
+                e.Graphics.FillEllipse(brush, rect);
+            }
+            
+            // Watch bezel
+            using (var pen = new Pen(Color.FromArgb(100, 100, 120), 4))
+            {
+                e.Graphics.DrawEllipse(pen, rect);
+            }
+            
+            // Hour markers
+            var center = new PointF(rect.X + rect.Width/2, rect.Y + rect.Height/2);
+            var radius = rect.Width / 2;
+            for (int i = 0; i < 12; i++)
+            {
+                var angle = i * 30 * Math.PI / 180;
+                var x1 = center.X + (radius - 10) * Math.Cos(angle - Math.PI / 2);
+                var y1 = center.Y + (radius - 10) * Math.Sin(angle - Math.PI / 2);
+                var x2 = center.X + (radius - 20) * Math.Cos(angle - Math.PI / 2);
+                var y2 = center.Y + (radius - 20) * Math.Sin(angle - Math.PI / 2);
                 
-                // Smooth glow border
-                var baseAlpha = _stopwatchEngine.IsRunning ? _pulseAlpha : 0.5f;
-                var glowColor = _stopwatchEngine.IsRunning ? 
-                    Color.FromArgb((int)(255 * baseAlpha), 46, 204, 113) :
-                    Color.FromArgb(128, 52, 152, 219);
-                    
-                using (var pen = new Pen(glowColor, 2))
+                using (var pen = new Pen(Color.FromArgb(150, 150, 170), 2))
                 {
-                    e.Graphics.DrawPath(pen, path);
+                    e.Graphics.DrawLine(pen, (float)x1, (float)y1, (float)x2, (float)y2);
                 }
+            }
+            
+            // Static glow based on state
+            var glowColor = _stopwatchEngine.IsRunning ? 
+                Color.FromArgb(120, 46, 204, 113) :
+                _stopwatchEngine.IsPaused ?
+                Color.FromArgb(100, 241, 196, 15) :
+                Color.FromArgb(80, 52, 152, 219);
+                
+            using (var pen = new Pen(glowColor, 4))
+            {
+                e.Graphics.DrawEllipse(pen, rect);
             }
         }
 
-        /// <summary>
-        /// Creates a rounded rectangle path
-        /// </summary>
-        private GraphicsPath GetRoundedRectPath(Rectangle rect, int radius)
-        {
-            var path = new GraphicsPath();
-            path.AddArc(rect.X, rect.Y, radius, radius, 180, 90);
-            path.AddArc(rect.Right - radius, rect.Y, radius, radius, 270, 90);
-            path.AddArc(rect.Right - radius, rect.Bottom - radius, radius, radius, 0, 90);
-            path.AddArc(rect.X, rect.Bottom - radius, radius, radius, 90, 90);
-            path.CloseFigure();
-            return path;
-        }
 
-        /// <summary>
-        /// Handles animation timer tick for glow effects
-        /// </summary>
-        private void AnimationTick(object sender, EventArgs e)
-        {
-            _pulseAlpha += 0.01f * _pulseDirection;
-            if (_pulseAlpha >= 0.7f || _pulseAlpha <= 0.4f)
-                _pulseDirection *= -1;
-                
-            if (_stopwatchEngine.IsRunning)
-                _timePanel?.Invalidate();
-        }
 
         /// <summary>
         /// Handles the Start button click event
@@ -280,7 +291,7 @@ namespace Stopwatch
         private void UpdateDisplay(object sender, EventArgs e)
         {
             _timeLabel.Text = _stopwatchEngine.ElapsedTime;
-            _timePanel?.Invalidate(); // Trigger repaint for glow effect
+            _timePanel.Invalidate();
         }
 
         /// <summary>
@@ -293,69 +304,8 @@ namespace Stopwatch
             _resumeButton.Enabled = _stopwatchEngine.IsPaused;
             _resetButton.Enabled = true;
             _stopButton.Enabled = _stopwatchEngine.IsRunning || _stopwatchEngine.IsPaused;
-            
-            // Update button opacity based on state
-            _startButton.Enabled = _startButton.Enabled;
-            _pauseButton.Enabled = _pauseButton.Enabled;
-            _resumeButton.Enabled = _resumeButton.Enabled;
-            _stopButton.Enabled = _stopButton.Enabled;
         }
     }
 
-    /// <summary>
-    /// Custom rounded button control with modern styling
-    /// </summary>
-    public class RoundButton : Button
-    {
-        protected override void OnPaint(PaintEventArgs pevent)
-        {
-            var rect = this.ClientRectangle;
-            rect.Inflate(-1, -1);
-            
-            using (var path = GetRoundedRectPath(rect, 15))
-            {
-                pevent.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                
-                // Button background with gradient
-                var color1 = this.Enabled ? this.BackColor : Color.FromArgb(100, 100, 100);
-                var color2 = this.Enabled ? 
-                    Color.FromArgb(Math.Max(0, color1.R - 30), Math.Max(0, color1.G - 30), Math.Max(0, color1.B - 30)) :
-                    Color.FromArgb(80, 80, 80);
-                    
-                using (var brush = new LinearGradientBrush(rect, color1, color2, 90f))
-                {
-                    pevent.Graphics.FillPath(brush, path);
-                }
-                
-                // Button border
-                using (var pen = new Pen(Color.FromArgb(50, Color.White), 1))
-                {
-                    pevent.Graphics.DrawPath(pen, path);
-                }
-                
-                // Button text
-                var textColor = this.Enabled ? this.ForeColor : Color.FromArgb(150, 150, 150);
-                using (var brush = new SolidBrush(textColor))
-                {
-                    var stringFormat = new StringFormat
-                    {
-                        Alignment = StringAlignment.Center,
-                        LineAlignment = StringAlignment.Center
-                    };
-                    pevent.Graphics.DrawString(this.Text, this.Font, brush, rect, stringFormat);
-                }
-            }
-        }
-        
-        private GraphicsPath GetRoundedRectPath(Rectangle rect, int radius)
-        {
-            var path = new GraphicsPath();
-            path.AddArc(rect.X, rect.Y, radius, radius, 180, 90);
-            path.AddArc(rect.Right - radius, rect.Y, radius, radius, 270, 90);
-            path.AddArc(rect.Right - radius, rect.Bottom - radius, radius, radius, 0, 90);
-            path.AddArc(rect.X, rect.Bottom - radius, radius, radius, 90, 90);
-            path.CloseFigure();
-            return path;
-        }
-    }
+
 }
