@@ -35,6 +35,17 @@ namespace Stopwatch
         }
 
         /// <summary>
+        /// Gets the total elapsed time as a TimeSpan for clock hand calculations
+        /// </summary>
+        public TimeSpan ElapsedTimeSpan
+        {
+            get
+            {
+                return _stopwatch.Elapsed + _pausedTime;
+            }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the stopwatch is currently running
         /// </summary>
         public bool IsRunning => _stopwatch.IsRunning;

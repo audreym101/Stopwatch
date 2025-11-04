@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "a/kP+zsyMo77D/p0U/sbAsWgPFUzAdPZQBF5zc/tjohS9qTh8sovWEHk9L1+fDDjPPxiTGDTmL2Fu4D8nYmUqA==",
+  "dgSpecHash": "e0uB7prp8/w=",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\stopwatch_GC1\\Stopwatch\\Stopwatch.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\HP\\Stopwatch-3\\Stopwatch.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\HP\\.nuget\\packages\\microsoft.netcore.app.ref\\7.0.20\\microsoft.netcore.app.ref.7.0.20.nupkg.sha512",
+    "C:\\Users\\HP\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\7.0.20\\microsoft.windowsdesktop.app.ref.7.0.20.nupkg.sha512",
+    "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\7.0.20\\microsoft.aspnetcore.app.ref.7.0.20.nupkg.sha512",
+    "C:\\Users\\HP\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\7.0.20\\microsoft.netcore.app.host.win-x64.7.0.20.nupkg.sha512"
+  ],
   "logs": []
 }
