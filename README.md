@@ -15,7 +15,7 @@ A professional Windows Forms stopwatch application built with C# following Test-
 - **Time Format**: 00:00:00 (hours:minutes:seconds)
 - **Update Frequency**: 100ms for smooth display
 - **Framework**: .NET 7.0 Windows Forms
-- **Testing**: MSTest with comprehensive unit tests
+- **Testing**: comprehensive unit tests
 
 ## How to Run
 
