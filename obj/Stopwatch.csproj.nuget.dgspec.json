@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\stopwatch_GC1\\Stopwatch\\Stopwatch.csproj": {}
+    "c:\\Users\\user\\stopwatch_GC1\\Stopwatch\\Stopwatch.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\stopwatch_GC1\\Stopwatch\\Stopwatch.csproj": {
+    "c:\\Users\\user\\stopwatch_GC1\\Stopwatch\\Stopwatch.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\stopwatch_GC1\\Stopwatch\\Stopwatch.csproj",
+        "projectUniqueName": "c:\\Users\\user\\stopwatch_GC1\\Stopwatch\\Stopwatch.csproj",
         "projectName": "Stopwatch",
-        "projectPath": "C:\\Users\\user\\stopwatch_GC1\\Stopwatch\\Stopwatch.csproj",
+        "projectPath": "c:\\Users\\user\\stopwatch_GC1\\Stopwatch\\Stopwatch.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\stopwatch_GC1\\Stopwatch\\obj\\",
+        "outputPath": "c:\\Users\\user\\stopwatch_GC1\\Stopwatch\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"
