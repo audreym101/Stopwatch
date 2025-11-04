@@ -18,6 +18,10 @@ A professional Windows Forms stopwatch application built with C# following Test-
 - **Testing**: comprehensive unit tests
 
 ## How to Run
+ copy the github link : 
+ then 
+ dotnet run 
+ 
 
 ### Prerequisites
 - .NET 7.0 SDK or later
@@ -114,5 +118,16 @@ Stopwatch/
 - Responsive UI that updates smoothly during operation
 - Proper resource management and disposal
 - Thread-safe operations for UI updates
+
+## Screenshot
+
+<img width="2290" height="1792" alt="paused 2025-11-04 031752" src="https://github.com/user-attachments/assets/f2865262-fb14-4e84-b290-9faad48c5c7f" />
+<img width="2512" height="1758" alt="stopped 2025-11-04 031709" src="https://github.com/user-attachments/assets/56e67e37-c366-4755-b21b-f3d5ec3b5a8e" />
+<img width="2642" height="1826" alt="reset 2025-11-04 031626" src="https://github.com/user-attachments/assets/eee969e4-143e-4f4e-82d9-c9c87711646c" />
+<img width="2866" height="1830" alt="stopwatch  2025-11-04 031536" src="https://github.com/user-attachments/assets/373626ee-0490-4ed5-8cba-0a62baece057" />
+## Demo video 
+["C:\Users\user\Videos\STOPWATCH_GC1 2025-11-04 031215.mp4"
+](https://drive.google.com/file/d/1ygCCHqofmsoNasOJ6-qHIN5hKD3sKP93/view?usp=sharing)
+
 
 
