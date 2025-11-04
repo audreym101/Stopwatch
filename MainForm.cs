@@ -5,9 +5,6 @@ using System.Windows.Forms;
 
 namespace Stopwatch
 {
-    /// <summary>
-    /// Main form for the Stopwatch application providing user interface
-    /// </summary>
     public partial class MainForm : Form
     {
         private readonly StopwatchEngine _stopwatchEngine;
@@ -21,9 +18,6 @@ namespace Stopwatch
         private Label _statusLabel;
         private Panel _timePanel;
 
-        /// <summary>
-        /// Initializes a new instance of the MainForm class
-        /// </summary>
         public MainForm()
         {
             _stopwatchEngine = new StopwatchEngine();
@@ -35,9 +29,6 @@ namespace Stopwatch
             UpdateButtonStates();
         }
 
-        /// <summary>
-        /// Initializes the form components and layout
-        /// </summary>
         private void InitializeComponent()
         {
             this.Text = "⌚ Watch Stopwatch";
@@ -49,14 +40,12 @@ namespace Stopwatch
             this.Paint += MainForm_Paint;
             this.Resize += MainForm_Resize;
 
-            // Circular watch face panel
             _timePanel = new Panel
             {
                 BackColor = Color.Transparent
             };
             _timePanel.Paint += WatchFace_Paint;
 
-            // Time display label
             _timeLabel = new Label
             {
                 Text = "00:00:00",
@@ -66,7 +55,6 @@ namespace Stopwatch
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Status label
             _statusLabel = new Label
             {
                 Text = "Ready to Start",
@@ -78,7 +66,6 @@ namespace Stopwatch
 
             _timePanel.Controls.AddRange(new Control[] { _timeLabel, _statusLabel });
 
-            // Create aligned watch-style buttons
             _startButton = CreateWatchButton("▶", Color.FromArgb(46, 204, 113), StartButton_Click);
             _pauseButton = CreateWatchButton("⏸", Color.FromArgb(241, 196, 15), PauseButton_Click);
             _resumeButton = CreateWatchButton("▶", Color.FromArgb(52, 152, 219), ResumeButton_Click);
@@ -94,13 +81,6 @@ namespace Stopwatch
             });
         }
 
-        /// <summary>
-        /// Creates a simple rectangular button
-        /// </summary>
-        /// <param name="text">Button text</param>
-        /// <param name="color">Button color</param>
-        /// <param name="clickHandler">Click event handler</param>
-        /// <returns>Configured button control</returns>
         private Button CreateWatchButton(string text, Color color, EventHandler clickHandler)
         {
             var button = new Button
@@ -118,50 +98,36 @@ namespace Stopwatch
             return button;
         }
 
-        /// <summary>
-        /// Positions all controls based on current form size
-        /// </summary>
         private void PositionControls()
         {
             var centerX = this.ClientSize.Width / 2;
             var centerY = this.ClientSize.Height / 2;
             var watchSize = Math.Min(this.ClientSize.Width - 100, this.ClientSize.Height - 150);
             
-            // Position watch face
             _timePanel.Location = new Point(centerX - watchSize/2, 50);
             _timePanel.Size = new Size(watchSize, watchSize);
             
-            // Position labels within watch face
             _timeLabel.Location = new Point(0, watchSize/2 - 25);
             _timeLabel.Size = new Size(watchSize, 50);
             _statusLabel.Location = new Point(0, watchSize/2 + 30);
             _statusLabel.Size = new Size(watchSize, 20);
             
-            // Position buttons: 3 on top, 2 on bottom
             var topButtonY = _timePanel.Bottom + 15;
             var bottomButtonY = topButtonY + 50;
             
-            // Top row: Start, Pause, Resume
             _startButton.Location = new Point(centerX - 95, topButtonY);
             _pauseButton.Location = new Point(centerX - 30, topButtonY);
             _resumeButton.Location = new Point(centerX + 35, topButtonY);
             
-            // Bottom row: Reset, Stop (centered)
             _resetButton.Location = new Point(centerX - 65, bottomButtonY);
             _stopButton.Location = new Point(centerX + 5, bottomButtonY);
         }
         
-        /// <summary>
-        /// Handles form resize events
-        /// </summary>
         private void MainForm_Resize(object sender, EventArgs e)
         {
             PositionControls();
         }
 
-        /// <summary>
-        /// Paints the main form with gradient background
-        /// </summary>
         private void MainForm_Paint(object sender, PaintEventArgs e)
         {
             using (var brush = new LinearGradientBrush(this.ClientRectangle, 
@@ -171,28 +137,22 @@ namespace Stopwatch
             }
         }
 
-        /// <summary>
-        /// Paints the watch face with circular design
-        /// </summary>
         private void WatchFace_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             var size = Math.Min(_timePanel.Width, _timePanel.Height) - 20;
             var rect = new Rectangle(10, 10, size, size);
             
-            // Watch face background
             using (var brush = new LinearGradientBrush(rect, Color.FromArgb(70, 70, 90), Color.FromArgb(30, 30, 50), 45f))
             {
                 e.Graphics.FillEllipse(brush, rect);
             }
             
-            // Watch bezel
             using (var pen = new Pen(Color.FromArgb(100, 100, 120), 4))
             {
                 e.Graphics.DrawEllipse(pen, rect);
             }
             
-            // Hour markers
             var center = new PointF(rect.X + rect.Width/2, rect.Y + rect.Height/2);
             var radius = rect.Width / 2;
             for (int i = 0; i < 12; i++)
@@ -209,7 +169,6 @@ namespace Stopwatch
                 }
             }
             
-            // Static glow based on state
             var glowColor = _stopwatchEngine.IsRunning ? 
                 Color.FromArgb(120, 46, 204, 113) :
                 _stopwatchEngine.IsPaused ?
@@ -222,11 +181,6 @@ namespace Stopwatch
             }
         }
 
-
-
-        /// <summary>
-        /// Handles the Start button click event
-        /// </summary>
         private void StartButton_Click(object sender, EventArgs e)
         {
             _stopwatchEngine.Start();
@@ -236,9 +190,6 @@ namespace Stopwatch
             UpdateButtonStates();
         }
 
-        /// <summary>
-        /// Handles the Pause button click event
-        /// </summary>
         private void PauseButton_Click(object sender, EventArgs e)
         {
             _stopwatchEngine.Pause();
@@ -248,9 +199,6 @@ namespace Stopwatch
             UpdateButtonStates();
         }
 
-        /// <summary>
-        /// Handles the Resume button click event
-        /// </summary>
         private void ResumeButton_Click(object sender, EventArgs e)
         {
             _stopwatchEngine.Resume();
@@ -260,9 +208,6 @@ namespace Stopwatch
             UpdateButtonStates();
         }
 
-        /// <summary>
-        /// Handles the Reset button click event
-        /// </summary>
         private void ResetButton_Click(object sender, EventArgs e)
         {
             _stopwatchEngine.Reset();
@@ -273,9 +218,6 @@ namespace Stopwatch
             UpdateButtonStates();
         }
 
-        /// <summary>
-        /// Handles the Stop button click event
-        /// </summary>
         private void StopButton_Click(object sender, EventArgs e)
         {
             var finalTime = _stopwatchEngine.Stop();
@@ -285,18 +227,12 @@ namespace Stopwatch
             UpdateButtonStates();
         }
 
-        /// <summary>
-        /// Updates the display with current time
-        /// </summary>
         private void UpdateDisplay(object sender, EventArgs e)
         {
             _timeLabel.Text = _stopwatchEngine.ElapsedTime;
             _timePanel.Invalidate();
         }
 
-        /// <summary>
-        /// Updates button enabled states based on stopwatch status
-        /// </summary>
         private void UpdateButtonStates()
         {
             _startButton.Enabled = !_stopwatchEngine.IsRunning && !_stopwatchEngine.IsPaused;
@@ -306,6 +242,4 @@ namespace Stopwatch
             _stopButton.Enabled = _stopwatchEngine.IsRunning || _stopwatchEngine.IsPaused;
         }
     }
-
-
 }
