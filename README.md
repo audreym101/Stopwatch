@@ -126,8 +126,6 @@ Stopwatch/
 <img width="2642" height="1826" alt="reset 2025-11-04 031626" src="https://github.com/user-attachments/assets/eee969e4-143e-4f4e-82d9-c9c87711646c" />
 <img width="2866" height="1830" alt="stopwatch  2025-11-04 031536" src="https://github.com/user-attachments/assets/373626ee-0490-4ed5-8cba-0a62baece057" />
 ## Demo video 
-["C:\Users\user\Videos\STOPWATCH_GC1 2025-11-04 031215.mp4"
-](https://drive.google.com/file/d/1ygCCHqofmsoNasOJ6-qHIN5hKD3sKP93/view?usp=sharing)
-
+(https://drive.google.com/file/d/19ZHsJV0qt17Ws0kFnqZNGv_6FZDaeciC/view?usp=sharing)
 
 
