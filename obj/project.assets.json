@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\Stopwatch-3\\Stopwatch.csproj",
+      "projectUniqueName": "C:\\Users\\HP\\Stopwatch\\Stopwatch.csproj",
       "projectName": "Stopwatch",
-      "projectPath": "C:\\Users\\HP\\Stopwatch-3\\Stopwatch.csproj",
+      "projectPath": "C:\\Users\\HP\\Stopwatch\\Stopwatch.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\Stopwatch-3\\obj\\",
+      "outputPath": "C:\\Users\\HP\\Stopwatch\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

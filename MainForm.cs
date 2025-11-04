@@ -79,6 +79,8 @@ namespace Stopwatch
                 TextAlign = ContentAlignment.MiddleCenter,
                 AutoSize = false
             };
+            // textual label visible by default (simple digits)
+            _timeLabel.Visible = true;
 
             _statusLabel = new Label
             {
@@ -127,45 +129,93 @@ namespace Stopwatch
         {
             var button = new Button
             {
-                Text = text,
-                Size = new Size(100, 40),
+                // keep actual Button.Text empty so the system doesn't render any default text
+                Text = string.Empty,
+                Size = new Size(110, 48),
                 BackColor = color,
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 FlatStyle = FlatStyle.Flat,
                 UseVisualStyleBackColor = false
             };
+            // store the logical label in Tag for our custom paint
+            button.Tag = text;
             button.FlatAppearance.BorderSize = 0;
             button.Click += clickHandler;
-            
-            // Make buttons rounded/oval by setting region
-            var path = new GraphicsPath();
-            path.AddEllipse(0, 0, button.Width, button.Height);
-            button.Region = new Region(path);
-            
-            // Custom paint to handle disabled state
+
+            // Make buttons square-oval (rounded rectangle with small radius)
+            void UpdateRegion()
+            {
+                var radius = 8;
+                var path = new GraphicsPath();
+                path.AddArc(0, 0, radius * 2, radius * 2, 180, 90);
+                path.AddArc(button.Width - radius * 2, 0, radius * 2, radius * 2, 270, 90);
+                path.AddArc(button.Width - radius * 2, button.Height - radius * 2, radius * 2, radius * 2, 0, 90);
+                path.AddArc(0, button.Height - radius * 2, radius * 2, radius * 2, 90, 90);
+                path.CloseFigure();
+                button.Region = new Region(path);
+            }
+
+            UpdateRegion();
+            // update region on resize
+            button.SizeChanged += (s, e) => UpdateRegion();
+
+            // Custom paint to draw icon above text and handle disabled state
             button.Paint += (s, e) =>
             {
                 var btn = s as Button;
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 var rect = new Rectangle(0, 0, btn.Width - 1, btn.Height - 1);
-                
+
                 // Draw button background with disabled state handling
                 var bgColor = btn.Enabled ? btn.BackColor : Color.FromArgb(200, btn.BackColor);
                 using (var brush = new SolidBrush(bgColor))
                 {
-                    e.Graphics.FillEllipse(brush, rect);
+                    using (var path = new GraphicsPath())
+                    {
+                        var radius = 8;
+                        path.AddArc(rect.X, rect.Y, radius * 2, radius * 2, 180, 90);
+                        path.AddArc(rect.Right - radius * 2, rect.Y, radius * 2, radius * 2, 270, 90);
+                        path.AddArc(rect.Right - radius * 2, rect.Bottom - radius * 2, radius * 2, radius * 2, 0, 90);
+                        path.AddArc(rect.X, rect.Bottom - radius * 2, radius * 2, radius * 2, 90, 90);
+                        path.CloseFigure();
+                        e.Graphics.FillPath(brush, path);
+                    }
                 }
-                
-                // Draw button text
-                var textColor = btn.Enabled ? btn.ForeColor : Color.FromArgb(200, btn.ForeColor);
-                using (var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                using (var brush = new SolidBrush(textColor))
+
+                // Draw icon above text. Use the stored label from Tag so Button.Text remains empty.
+                var label = (btn.Tag as string) ?? string.Empty;
+                var icon = GetButtonIcon(label);
+                using (var iconFont = new Font("Segoe UI Symbol", 16, FontStyle.Regular))
+                using (var textFont = new Font(btn.Font.FontFamily, 10, FontStyle.Bold))
+                using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 {
-                    e.Graphics.DrawString(btn.Text, btn.Font, brush, rect, format);
+                    var iconColor = btn.Enabled ? Color.White : Color.FromArgb(220, 220, 220);
+                    var textColor = btn.Enabled ? Color.White : Color.FromArgb(220, 220, 220);
+
+                    var iconRect = new RectangleF(rect.X, rect.Y + 4, rect.Width, rect.Height * 0.55f);
+                    e.Graphics.DrawString(icon, iconFont, new SolidBrush(iconColor), iconRect, sf);
+
+                    var labelRect = new RectangleF(rect.X, rect.Y + rect.Height * 0.5f, rect.Width, rect.Height * 0.45f);
+                    // draw only the white text (no background/secondary text)
+                    e.Graphics.DrawString(label, textFont, new SolidBrush(textColor), labelRect, sf);
                 }
             };
-            
+
             return button;
+        }
+
+        private string GetButtonIcon(string buttonText)
+        {
+            return buttonText switch
+            {
+                "Start" => "▶",
+                "Pause" => "⏸",
+                "Resume" => "▶",
+                "Reset" => "⟲",
+                "Stop" => "⏹",
+                _ => ""
+            };
         }
 
         /// <summary>
@@ -356,7 +406,7 @@ namespace Stopwatch
             var minuteHandEndX = center.X + minuteHandLength * Math.Cos(minuteAngle);
             var minuteHandEndY = center.Y + minuteHandLength * Math.Sin(minuteAngle);
             var minuteHandWidth = Math.Max(3, clockSize * 0.025f);
-            
+
             using (var pen = new Pen(Color.Black, minuteHandWidth))
             {
                 pen.EndCap = LineCap.Round;
@@ -471,5 +521,7 @@ namespace Stopwatch
             _resetButton.Enabled = true;
             _stopButton.Enabled = _stopwatchEngine.IsRunning || _stopwatchEngine.IsPaused;
         }
+
+        
     }
 }
